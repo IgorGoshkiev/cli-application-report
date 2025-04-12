@@ -4,7 +4,7 @@ from .base import BaseReport
 
 
 class HandlersReport(BaseReport):
-    name = "handlers"  # Просто атрибут класса
+    name = "handlers"
     LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
     @classmethod
@@ -12,37 +12,41 @@ class HandlersReport(BaseReport):
         stats = defaultdict(lambda: defaultdict(int))
 
         for record in records:
-            if record["level"] in cls.LEVELS:
-                stats[record["handler"]][record["level"]] += 1
+            stats[record["handler"]][record["level"]] += 1
 
         handlers = sorted(stats.keys())
         totals = {level: 0 for level in cls.LEVELS}
 
-        max_handler_len = max((len(h) for h in handlers), default=0)
+        # Рассчитываем ширину колонок
+        max_handler_len = max(len("HANDLER"), max((len(h) for h in handlers), default=0))
         max_level_lens = {
-            level: max(len(str(stats[h].get(level, 0))) for h in handlers)
+            level: max(len(level), max((len(str(stats[h].get(level, 0))) for h in handlers), default=0))
             for level in cls.LEVELS
         }
 
+        # Форматирование строки
         def format_row(handler, counts):
             cells = [handler.ljust(max_handler_len)]
             for level in cls.LEVELS:
                 count = str(counts.get(level, 0))
                 cells.append(count.rjust(max_level_lens[level]))
+                totals[level] += counts.get(level, 0)
             return "  ".join(cells)
 
         report = []
+        total_requests = sum(sum(level_counts.values()) for level_counts in stats.values())
+
+        # Заголовок
         header = ["HANDLER".ljust(max_handler_len)] + [
             level.rjust(max_level_lens[level]) for level in cls.LEVELS
         ]
         report.append("  ".join(header))
 
+        # Данные
         for handler in handlers:
-            counts = stats[handler]
-            for level in cls.LEVELS:
-                totals[level] += counts.get(level, 0)
-            report.append(format_row(handler, counts))
+            report.append(format_row(handler, stats[handler]))
 
-        report.append(format_row("", totals))
-        total_requests = sum(totals.values())
+        # Итоговая строка
+        report.append(format_row("TOTAL", totals))
+
         return f"Total requests: {total_requests}\n\n" + "\n".join(report)

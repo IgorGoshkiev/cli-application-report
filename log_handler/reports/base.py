@@ -5,7 +5,7 @@ T = TypeVar('T', bound='BaseReport')
 
 
 class BaseReport(ABC):
-    name: str  # Теперь это атрибут класса, а не property
+    name: str
 
     @classmethod
     @abstractmethod
