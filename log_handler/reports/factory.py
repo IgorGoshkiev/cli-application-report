@@ -1,9 +1,12 @@
 from typing import Dict, Type
-from .base import BaseReport
-from .handlers import HandlersReport
+from .base_report import BaseReport
+from .handler_report import HandlersReport
+from .security_report import SecurityReport
+
 
 _REPORTS: Dict[str, Type[BaseReport]] = {
-    HandlersReport.name: HandlersReport
+    HandlersReport.name: HandlersReport,
+    SecurityReport.name: SecurityReport
 }
 
 
@@ -17,3 +20,4 @@ def get_report(report_name: str) -> Type[BaseReport]:
 def register_report(report_class: Type[BaseReport]):
     """Функция для регистрации новых отчетов"""
     _REPORTS[report_class.name] = report_class
+

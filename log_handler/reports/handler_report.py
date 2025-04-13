@@ -1,6 +1,6 @@
 from collections import defaultdict
 from typing import List, Dict
-from .base import BaseReport
+from .base_report import BaseReport
 
 
 class HandlersReport(BaseReport):
@@ -9,9 +9,13 @@ class HandlersReport(BaseReport):
 
     @classmethod
     def generate(cls, records: List[Dict[str, str]]) -> str:
+
+        # Фильтруем только request записи
+        request_records = [r for r in records if r.get("type") == "request"]
+
         stats = defaultdict(lambda: defaultdict(int))
 
-        for record in records:
+        for record in request_records:
             stats[record["handler"]][record["level"]] += 1
 
         handlers = sorted(stats.keys())

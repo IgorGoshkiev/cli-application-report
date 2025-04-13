@@ -30,8 +30,8 @@ def parse_args(args=None) -> argparse.Namespace:
     parser.add_argument(
         "--report",
         required=True,
-        choices=["handlers"],
-        help="Тип отчета (доступные: handlers)"
+        choices=["handlers", "security"],
+        help="Тип отчёта (доступные: handlers, security)"
     )
     return parser.parse_args(args)
 
