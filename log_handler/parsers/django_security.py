@@ -5,6 +5,7 @@ from .base_parcer import BaseLogParser
 
 class DjangoSecurityParser(BaseLogParser):
     SECURITY_PATTERN = re.compile(
+        #  ищет точную строку django.security
         r"django\.security: "
         r"(?P<event_type>\w+): "
         r"(?P<message>.+)"

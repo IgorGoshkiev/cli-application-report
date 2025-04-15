@@ -5,6 +5,7 @@ from .base_parcer import BaseLogParser
 
 class DjangoRequestParser(BaseLogParser):
     LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    # \S — любой символ, кроме пробела (включая буквы, цифры, спецсимволы).
     REQUEST_PATTERN = re.compile(r"django\.request: (?P<method>\w+) (?P<handler>\S+) (?P<status>\d{3})")
     ERROR_PATTERN = re.compile(r"django\.request: (?:Internal Server Error: )?(?P<handler>\S+)")
 
@@ -13,8 +14,9 @@ class DjangoRequestParser(BaseLogParser):
 
     def parse(self, message: str) -> Optional[Dict[str, str]]:
         request_match = self.REQUEST_PATTERN.search(message)
+
         if request_match:
-            status = int(request_match.group("status"))
+            status = int(request_match.group("status")) # Доступ по имени группы
             handler = request_match.group("handler")
 
             if not handler:

@@ -17,7 +17,3 @@ def get_report(report_name: str) -> Type[BaseReport]:
     return _REPORTS[report_name]
 
 
-def register_report(report_class: Type[BaseReport]):
-    """Функция для регистрации новых отчетов"""
-    _REPORTS[report_class.name] = report_class
-
